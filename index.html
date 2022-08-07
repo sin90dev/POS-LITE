@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>POS Lite</title>
+
+  <link rel="icon" type="image/png" sizes="16x16"
+    href="https://cdn0.iconfinder.com/data/icons/kameleon-free-pack-rounded/110/Shop-16.png">
+  <link rel="icon" type="image/png" sizes="32x32"
+    href="https://cdn0.iconfinder.com/data/icons/kameleon-free-pack-rounded/110/Shop-32.png">
+  <link rel="icon" type="image/png" sizes="96x96"
+    href="https://cdn0.iconfinder.com/data/icons/kameleon-free-pack-rounded/110/Shop-96.png">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="Description" content="POS Lite" />
+  <meta name="author" content="POS Lite">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+
+      <div class="col-lg-12">
+        <ul class="nav nav-pills justify-content-end p-2" style="width:100%; background-color:aliceblue">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">Sales</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./product.html">Product</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-lg-12 mt-3">
+        <h2 class="alert alert-primary text-center">
+          Sales
+        </h2>
+      </div>
+
+      <div class="col-lg-4 mb-3">
+        <div id="reader"></div>
+      </div>
+
+      <div class="col-lg-8 mb-3">
+        <div class="card" id="table_sales_card">
+          <div class="card-body p-3">
+            <div id="pos_logo" style="display: none;">
+              <center><img src="https://cdn0.iconfinder.com/data/icons/kameleon-free-pack-rounded/110/Shop-96.png"></center>
+            </div>
+            <div id="pos_header"></div>
+            <div class="table-responsive">
+              <table class="table table-sm table-striped mb-0" id="tableSalesData">
+                <thead>
+                  <tr>
+                    <th style="width:75%">Product</th>
+                    <th style="text-align:end">Qty</th>
+                    <th style="text-align:end">Price</th>
+                    <th style="text-align:end">Total</th>
+                    <th id="table_sales_operation_th">Operation</th>
+                  </tr>
+                </thead>
+                <tbody id="tableSales"></tbody>
+                <tfoot class="bg-info" id="totalPrice"></tfoot>
+              </table>
+            </div>
+            <div id="pos_footer"></div>
+          </div>
+        </div>
+        <div class="card mt-3 mb-3">
+          <div class="card-body p-3">
+            <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top"
+              title="Add product from list" onclick="onSearchClicked()">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Clear"
+              onclick="clearSalesTable()">
+              <i class="fas fa-redo"></i>
+            </button>
+            <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="top"
+              title="Print struct" onclick="printTableSales()">
+              <i class="fa fa-print"></i>
+            </button>
+            <form class="form-inline mt-2" id="seach_product_form" style="display: none;">
+              <div class="form-group mb-2">
+                <label for=""></label>
+                <input type="text" placeholder="Product Code" class="form-control" name="product_code_search" id="product_code_search"
+                  onkeypress="handleEnterKeyPressOnSearchProductCode(event)" />
+              </div>
+              <button type="button" class="btn btn-info ml-2" onclick="onSearchProduct()">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </button>
+              <div class="table-responsive">
+                <table id="datatable" class="table table-sm table-striped mb-0">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Code</th>
+                      <th>Product</th>
+                      <th style="text-align:end">Price</th>
+                      <th style="text-align:center">Add</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableProduct"></tbody>
+                </table>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Custom Alert -->
+  <div id="customAlert"></div>
+
+
+  <!-- Import JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="js/localstoragedb.min.js"></script>
+  <script src="js/localstoragedbcustom.js"></script>
+  <script src="js/customalert.js"></script>
+
+  <!-- Scanner -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script type="text/javascript">
+    function onScanSuccess(decodedText, decodedResult) {
+      html5QrcodeScanner.pause()
+      setTimeout(onNextScan, 1500)
+      onScannerFound(decodedText)
+    }
+
+    function onScannerFound(decodedText) {
+      lsDB = newSesionDB()
+      var products = lsDB.queryAll("products", {
+        query: { product_code: decodedText }
+      })
+
+      if (products.length != 1) {
+        alertE("product not found or corrupted")
+        setTimeout(alertClose, 1000)
+        return
+      }
+
+      onAddToCart(products[0].ID, products[0].product_name, products[0].product_price, 1)
+    }
+
+    function onNextScan() {
+      html5QrcodeScanner.resume()
+    }
+
+    let qrboxFunction = function (viewfinderWidth, viewfinderHeight) {
+      let minEdgePercentage = 0.7 // 70%
+      let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight)
+      let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage)
+      return {
+        width: qrboxSize,
+        height: qrboxSize
+      }
+    }
+
+    let config = { fps: 10, qrbox: qrboxFunction }
+    let html5QrcodeScanner = new Html5QrcodeScanner("reader", config, /* verbose= */ false)
+    html5QrcodeScanner.render(onScanSuccess)
+  </script>
+
+  <!-- Manual Add Product -->
+  <script type="text/javascript">
+    function handleEnterKeyPressOnSearchProductCode(e) {
+      if (e.keyCode === 13) {
+        e.preventDefault()
+        onSearchProduct()
+      }
+    }
+
+    function onSearchClicked() {
+      var formSearchProduct = document.getElementById("seach_product_form")
+      if (formSearchProduct.style.display === "none") {
+        formSearchProduct.style.display = "flex"
+      } else {
+        formSearchProduct.style.display = "none"
+      }
+    }
+
+    function onSearchProduct() {
+      document.getElementById('tableProduct').innerHTML = ``
+      var input = document.getElementById('product_code_search').value
+      if (input.length < 5) {
+        alertE("Please type atleast 5 character")
+        return
+      }
+
+      lsDB = newSesionDB()
+      var searchQuery = function (row) {
+        if (row.product_code.match(input)) {
+          return true
+        } else {
+          return false
+        }
+      }
+      var searchProduct = lsDB.queryAll("products", {
+        query: searchQuery
+      })
+
+      var tableProduct = ``
+      if (searchProduct.length != 0) {
+        searchProduct.forEach(function (value) {
+          var singleData = Object.values(value)
+          var singleDataRow = ``
+          singleData.forEach(function (va, i) {
+            if (i+1 == singleData.length) {
+              singleDataRow += `<td style="text-align:end">${va}</td>`
+            } else{
+              singleDataRow += `<td>${va}</td>`
+            }
+          })
+          tableProduct += "<tr>" + singleDataRow + `<td style="text-align:center"><button type="button" class="btn btn-sm btn-success" onclick="onAddToCart(${singleData[0]}, '${singleData[2]}', '${singleData[3]}', 1)">
+							<i class="fa fa-plus"></i>
+						</button></td></tr>`
+        })
+      }
+
+      document.getElementById('tableProduct').innerHTML = tableProduct
+    }
+
+  </script>
+
+  <!-- Sales/Transaction Table -->
+  <script type="text/javascript">
+    function handleEnterKeyPressOnPaymentSave(e) {
+      if (e.keyCode === 13) {
+        e.preventDefault()
+        onTotalPaymentSave()
+      }
+    }
+
+    function onAddToCart(id, productName, productPrice, qtyValue) {
+      var pid = "pid_" + id
+      var pidQty = "pid_qty_" + id
+      var pidSubtotalPrice = "pid_subtotal_" + id
+      var tr = "<tr id=" + pid + ">"
+      var tdProductName = "<td>" + productName + "</td>"
+      var tdProductPrice = "<td style='text-align:end'>" + productPrice + "</td>"
+      var tdOP = `<td id="table_sales_operation_button_${id}" style="text-align:center">
+							<button type="button" class="btn btn-sm btn-success" onclick="onAddToCart(${id}, '${productName}', '${productPrice}', 1)">
+								<i class="fa fa-plus"></i>
+							</button>
+							<button type="button" class="btn btn-sm btn-danger" onclick="onAddToCart(${id}, '${productName}', '${productPrice}', -1)">
+								<i class="fa fa-minus"></i>
+						</button>
+						</td>`
+
+      if (document.getElementById(pid) == null) {
+        var tdQty = `<td id="${pidQty}"  style='text-align:end'>1</td>`
+        var tdSubTotalPrice = `<td id="${pidSubtotalPrice}" style='text-align:end'>${productPrice}</td>`
+        document.getElementById("tableSales").innerHTML += tr + tdProductName + tdQty + tdProductPrice + tdSubTotalPrice + tdOP + "</tr>"
+        calculateTotal()
+      } else {
+        var qty = parseInt(document.getElementById(pidQty).innerHTML) || 0
+        qty += qtyValue
+        if (qty == 0) {
+          document.getElementById(pid).remove()
+          calculateTotal()
+          return
+        }
+
+        productPriceInt = parseInt(productPrice) || 0
+        var subTotalPrice = qty * productPriceInt
+
+        var tdQty = `<td id="${pidQty}" style='text-align:end'>${qty}</td>`
+        var tdSubTotalPrice = `<td id="${pidSubtotalPrice}" style='text-align:end'>${subTotalPrice}</td>`
+        document.getElementById(pid).innerHTML = tr + tdProductName + tdQty + tdProductPrice + tdSubTotalPrice + tdOP + "</tr>"
+        calculateTotal()
+      }
+    }
+
+    function calculateTotal() {
+      var subTotal = Array.from(document.querySelectorAll("[id^='pid_subtotal_']"))
+      if (subTotal.length != 0) {
+        var total = 0
+        subTotal.forEach(function (value) {
+          var subTotalInt = parseInt(value.innerHTML) || 0
+          total += subTotalInt
+        })
+        document.getElementById("totalPrice").innerHTML = `<tr>
+									<th>Total</th>
+									<th colspan="3" id="totalPriceTH" style='text-align:end'>${total}</th>
+									<th id="table_sales_operation_tfoot_1"></th>
+								</tr>
+								<tr>
+									<th>Payment</th>
+									<th <th colspan="3" id="totalPayment" style='text-align:end'>${total}</th>
+									<th id="table_sales_operation_tfoot_2" style="text-align:center">
+										<button class="btn btn-sm btn-warning" onclick="onTotalPaymentEdit()">
+											<i class="fa fa-edit"></i>
+										</button>
+									</th>
+								</tr>
+								<tr>
+									<th>Change</th>
+									<th <th colspan="3" id="totalChange" style='text-align:end'>0</th>
+									<th id="table_sales_operation_tfoot_4"></th>
+								</tr>`
+      } else {
+        document.getElementById("totalPrice").innerHTML = ""
+      }
+    }
+
+    function onTotalPaymentEdit() {
+      var paymentBefore = document.getElementById("totalPayment").innerHTML
+      document.getElementById("totalPayment").innerHTML = `<input id="totalPaymentEdit" type="number" value=${paymentBefore} onkeypress="handleEnterKeyPressOnPaymentSave(event)"></input>`
+      document.getElementById("table_sales_operation_tfoot_2").innerHTML = `
+			<button class="btn btn-sm btn-primary" onclick="onTotalPaymentSave()">
+				<i class="fas fa-save"></i>
+			</button>`
+    }
+
+    function onTotalPaymentSave() {
+      var paymentAfter = document.getElementById("totalPaymentEdit").value
+      document.getElementById("totalPayment").innerHTML = `<th id="totalPayment">${paymentAfter}</th>`
+      document.getElementById("table_sales_operation_tfoot_2").innerHTML = `
+			<button class="btn btn-sm btn-warning" onclick="onTotalPaymentEdit()">
+				<i class="fa fa-edit"></i>
+			</button>`
+      calculatePayment()
+    }
+
+    function calculatePayment() {
+      var totalPrice = parseInt(document.getElementById("totalPriceTH").innerHTML) || 0
+      var totalPayment = parseInt(document.getElementById("totalPayment").innerHTML) || 0
+      document.getElementById("totalPayment").innerHTML = totalPayment
+      document.getElementById("totalChange").innerHTML = totalPayment - totalPrice
+    }
+
+    function clearSalesTable() {
+      document.getElementById("tableSales").innerHTML = ""
+      document.getElementById("totalPrice").innerHTML = ""
+    }
+
+  </script>
+
+  <!-- Table Printer -->
+  <script type="text/javascript">
+    function printTableSales() {
+      var tableCard = document.getElementById("table_sales_card").innerHTML;
+      var data = document.getElementById("tableSales").innerHTML;
+      if (data == "") {
+        alertE("Please add atleast 1 product to print")
+        return
+      }
+
+      //Get the HTML of whole page
+      var oldPage = document.body.innerHTML;
+      //Reset the page's HTML with div's HTML only
+      document.body.innerHTML =
+        `<html>
+          <head>
+            <title>POS Lite</title>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+				  </head>
+        <body>` + tableCard + `</body>`;
+
+      var removeItem = Array.from(document.querySelectorAll("[id^='table_sales_operation_']"))
+      removeItem.forEach(function (value) {
+        value.remove()
+      })
+
+      document.getElementById("pos_logo").style.display = "block"
+      document.getElementById("pos_header").innerHTML = `
+        <br />
+        <p>
+          Printed By : Pos Lite<br />
+          Order ID : PL/PL/000001<br />
+          Date : 2022-08-01 22:22:22
+        </p>`
+      document.getElementById("pos_footer").innerHTML = `
+        <br />
+        <p style="text-align:center">Thank You</p>`
+
+      //Print Page
+      window.print();
+
+      //Restore orignal HTML
+      document.body.innerHTML = oldPage;
+      html5QrcodeScanner.render(onScanSuccess)
+    }
+
+  </script>
+
+</body>
+
+</html>

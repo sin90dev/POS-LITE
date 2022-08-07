@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>POS Lite</title>
+
+  <link rel="icon" type="image/png" sizes="16x16"
+    href="https://cdn0.iconfinder.com/data/icons/kameleon-free-pack-rounded/110/Shop-16.png">
+  <link rel="icon" type="image/png" sizes="32x32"
+    href="https://cdn0.iconfinder.com/data/icons/kameleon-free-pack-rounded/110/Shop-32.png">
+  <link rel="icon" type="image/png" sizes="96x96"
+    href="https://cdn0.iconfinder.com/data/icons/kameleon-free-pack-rounded/110/Shop-96.png">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="Description" content="POS Lite" />
+  <meta name="author" content="POS Lite">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+
+      <div class="col-lg-12">
+        <ul class="nav nav-pills justify-content-end p-2" style="width:100%; background-color:aliceblue">
+          <li class="nav-item">
+            <a class="nav-link" href="./index.html">Sales</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="#">Product</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-lg-12 mt-3">
+        <h2 class="alert alert-primary text-center">
+          Product
+        </h2>
+      </div>
+
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body p-3">
+            <div class="row">
+              <div class="col-lg-4 mb-2">
+                <div class="row no-gutters">
+                  <div class="col mr-1">
+                    <button type="button" class="btn btn-info btn-block" onclick="onDownloadProduct()">Download Product</button>
+                  </div>
+                  <div class="col">
+                    <button type="button" class="btn btn-info btn-block" onclick="onUploadProduct()">Upload Product</button>
+                  </div>
+                </div>
+                <div class="input-group-sm mt-2 mb-2" style="display:none" id="product_upload_form">
+                  <input type="file" class="form-control" id="product_file">
+                  <div class="input-group-append">
+                    <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#exampleModal">Upload</button>
+                  </div>
+                </div>
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Warning</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        This action will not change the current transaction record <br />
+                        Do you really want to replace all products?
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="onUploadProductProcess()">Save changes</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4 offset-lg-4 mb-2">
+                <div class="input-group">
+                  <input id="filter_value" type="text" class="form-control" placeholder="Filter Value"
+                    aria-label="Filter Value" aria-describedby="basic-addon2">
+                  <div class="input-group-append">
+                    <select id="filter_type" class="custom-select" id="inputGroupSelect04">
+                      <option value="default" selected>Choose filter</option>
+                      <option value="product_code">Code</option>
+                      <option value="product_name">Name</option>
+                    </select>
+                    <button class="btn btn-info btn-rounded" onclick="onSearchProduct()">
+                      <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table id="datatable" class="table table-sm table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th style="text-align:end">Price</th>
+                    <th style="text-align:center">Operation</th>
+                  </tr>
+                </thead>
+                <tbody id="product_list"></tbody>
+                <tfoot id="new_product" class="bg-info">
+                  <tr>
+                    <td></td>
+                    <td>
+                      <input id="new_product_code" type="text" class="form-control">
+                    </td>
+                    <td>
+                      <input id="new_product_name" type="text" class="form-control">
+                    </td>
+                    <td>
+                      <input id="new_product_price" type="text" class="form-control" style="text-align:end">
+                    </td>
+                    <td style="text-align:center"><button type="button" class="btn btn-success btn-rounded btn-sm my-0"
+                        style="border-color:antiquewhite" onclick="onAddProduct()">
+                        <i class="fas fa-plus"></i>
+                      </button></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Custom Alert -->
+    <div id="customAlert"></div>
+
+  </div>
+
+  <!-- Import JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+  <script src="js/localstoragedb.min.js"></script>
+  <script src="js/localstoragedbcustom.js"></script>
+  <script src="js/customalert.js"></script>
+
+  <!-- Custom JS -->
+  <script type="text/javascript">
+
+    allProducts() // init page
+
+    function allProducts() {
+      var listProduct = lsDB.queryAll("products")
+      if (listProduct.length == 0) {
+        return
+      }
+
+      productList = ``
+      listProduct.forEach(function (value) {
+        var singleDataValues = Object.values(value)
+        var singleDataKeys = Object.keys(value)
+        var singleDataRow = ``
+        singleDataValues.forEach(function (va, i) {
+          if (i + 1 == singleDataValues.length) { // indicating last row that i need to move text to right side
+            singleDataRow += `<td style="text-align:end" id="${singleDataKeys[i]}_${singleDataValues[0]}">${va}</td>`
+          } else {
+            singleDataRow += `<td id="${singleDataKeys[i]}_${singleDataValues[0]}">${va}</td>`
+          }
+        })
+
+        productList += `
+        <tr id="product_data_${singleDataValues[0]}">
+          ${singleDataRow}
+          <td style="text-align:center">
+            <button class="btn btn-sm btn-secondary" onclick="onEditProduct(${singleDataValues[0]})">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="onDeleteProduct(${singleDataValues[0]})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>`
+      })
+
+      document.getElementById("product_list").innerHTML = productList
+    }
+
+    function onAddProduct() {
+      var productCode = document.getElementById("new_product_code").value
+      var productName = document.getElementById("new_product_name").value
+      var productPrice = document.getElementById("new_product_price").value
+
+      if (productCode == "" || productName == "" || productPrice == "") {
+        alertE("Product code, Product Name or Price should not empty")
+        return
+      }
+
+      var regex = /^.{5,}$/
+      if (!(regex.test(productCode)) || !(regex.test(productName))) {
+        alertE("Product code or product name should more than 5 character")
+        return
+      }
+
+      var regex = /^\d+$/
+      if (!(regex.test(productPrice))) {
+        alertE("Price should be numeric format")
+        return
+      }
+
+      var registeredProduct = lsDB.queryAll("products", {
+        query: { product_code: productCode }
+      })
+
+      if (registeredProduct.length > 0) {
+        alertE("Product code already used")
+        return
+      }
+
+      lsDB.insert("products", {
+        product_code: productCode,
+        product_name: productName,
+        product_price: productPrice,
+      })
+      lsDB.commit()
+      allProducts()
+
+      document.getElementById("new_product_name").value = ""
+      document.getElementById("new_product_code").value = ""
+      document.getElementById("new_product_price").value = ""
+    }
+
+    function onEditProduct(id) {
+      var currentProductID = document.getElementById("ID_" + id).innerHTML
+      var currentProductCode = document.getElementById("product_code_" + id).innerHTML
+      var currentProductName = document.getElementById("product_name_" + id).innerHTML
+      var currentProductPrice = document.getElementById("product_price_" + id).innerHTML
+
+      document.getElementById("product_data_" + id).innerHTML = `
+          <td id="ID_${id}">${currentProductID}</td>
+          <td id="product_code_${id}" contenteditable=true style="border:groove">${currentProductCode}</td>
+          <td id="product_name_${id}" contenteditable=true style="border:groove">${currentProductName}</td>
+          <td id="product_price_${id}" contenteditable=true style="border:groove; text-align:end">${currentProductPrice}</td>
+          <td style="text-align:center">
+            <button class="btn btn-sm btn-primary" onclick="onSaveProduct(${id})">
+              <i class="fa fa-save"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="onDeleteProduct(${id})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>`
+
+    }
+
+    function onSaveProduct(id) {
+      var changeProductID = document.getElementById("ID_" + id).innerHTML
+      var changeProductCode = document.getElementById("product_code_" + id).innerHTML
+      var changeProductName = document.getElementById("product_name_" + id).innerHTML
+      var changeProductPrice = document.getElementById("product_price_" + id).innerHTML
+
+      if (changeProductCode == "" || changeProductName == "" || changeProductPrice == "") {
+        alertE("Product code, product name or price should not empty")
+        return
+      }
+   
+      var regex = /^.{5,}$/
+      if (!(regex.test(changeProductCode)) || !(regex.test(changeProductName))) {
+        alertE("Product code or product name should more than 5 character")
+        return
+      }
+
+      var regex = /^\d+$/
+      if (!(regex.test(changeProductPrice))) {
+        alertE("Price should be numeric format")
+        return
+      }
+
+      var registeredProduct = lsDB.queryAll("products", {
+        query: { product_code: changeProductCode }
+      })
+      if (registeredProduct.length > 0) {
+        if (registeredProduct[0].product_code == changeProductCode && registeredProduct[0].ID != id) {
+          alertE("Product code already used")
+          return
+        }
+      }
+
+      document.getElementById("product_data_" + id).innerHTML = `
+          <td id="ID_${id}">${changeProductID}</td>
+          <td id="product_code_${id}">${changeProductCode}</td>
+          <td id="product_name_${id}">${changeProductName}</td>
+          <td id="product_price_${id}" style="text-align:end">${changeProductPrice}</td>
+          <td style="text-align:center">
+            <button class="btn btn-sm btn-secondary" onclick="onEditProduct(${id})">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="onDeleteProduct(${id})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>`
+
+      lsDB.update("products", { ID: id }, function (row) {
+        row.product_code = changeProductCode
+        row.product_name = changeProductName
+        row.product_price = changeProductPrice
+        return row
+      })
+      lsDB.commit()
+    }
+
+    function onDeleteProduct(id) {
+      lsDB.deleteRows("products", { ID: id })
+      lsDB.commit()
+      document.getElementById("product_data_" + id).remove()
+    }
+
+    function onSearchProduct() {
+      var filterType = document.getElementById("filter_type").value
+      var filterValue = document.getElementById("filter_value").value
+
+      var newQuery = {}
+      if (filterType == "default") {
+        document.getElementById("filter_value").value = ""
+        allProducts()
+        return
+      } else {
+        newQuery = function (row) {
+          if (row[filterType].match(filterValue)) {
+            return true
+          } else {
+            return false
+          }
+        }
+      }
+
+      var listProduct = lsDB.queryAll("products", {
+        query: newQuery
+      })
+      if (listProduct.length == 0) {
+        document.getElementById("product_list").innerHTML = ""
+        return
+      }
+
+      productList = ``
+      listProduct.forEach(function (value) {
+
+        var singleDataValues = Object.values(value)
+        var singleDataKeys = Object.keys(value)
+        var singleDataRow = ``
+        singleDataValues.forEach(function (va, i) {
+          singleDataRow += `<td id="${singleDataKeys[i]}_${singleDataValues[0]}">${va}</td>`
+        })
+
+        productList += `
+        <tr id="product_data_${singleDataValues[0]}">
+          ${singleDataRow}
+          <td style="text-align:center">
+            <button class="btn btn-sm btn-danger" onclick="onDeleteProduct(${singleDataValues[0]})">
+              <i class="fas fa-trash"></i>
+            </button>
+            <button class="btn btn-sm btn-success" onclick="onEditProduct(${singleDataValues[0]})">
+              <i class="fa fa-edit"></i>
+          </button>
+          </td>
+        </tr>`
+      })
+
+      document.getElementById("product_list").innerHTML = productList
+    }
+
+    function onDownloadProduct() {
+      var listProduct = lsDB.queryAll("products")
+      if (listProduct.length == 0) {
+        return
+      }
+
+      var header = Object.keys(listProduct[0]).join(",") + "\n"
+      var productCSV = ""
+      listProduct.forEach(function (value, i) {
+        var {ID, ...valueWithoutID} = value
+        if (i == 0) { // first iteration
+          productCSV += Object.keys(valueWithoutID).join(",") + "\n"
+          productCSV += Object.values(valueWithoutID).join(",") + "\n"
+        }
+        else if (i + 1 == listProduct.length) { // last iteration
+          productCSV += Object.values(valueWithoutID).join(",")
+        } else {
+          productCSV += Object.values(valueWithoutID).join(",") + "\n"
+        }
+      })
+
+      var csv_file, download_link
+      csv_file = new Blob([productCSV], { type: "text/csv" })
+      download_link = document.createElement("a")
+      download_link.download = "product.csv"
+      download_link.href = window.URL.createObjectURL(csv_file)
+      download_link.style.display = "none"
+      document.body.appendChild(download_link)
+      download_link.click()
+    }
+
+    function onUploadProduct() {
+      var formUploadProduct = document.getElementById("product_upload_form")
+      if (formUploadProduct.style.display === "none") {
+        formUploadProduct.style.display = "flex"
+      } else {
+        formUploadProduct.style.display = "none"
+      }
+    }
+
+    function onUploadProductProcess() {
+      var productFile = document.getElementById("product_file")
+      var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/
+      if (regex.test(productFile.value.toLowerCase())) {
+        if (typeof (FileReader) != "undefined") {
+          var reader = new FileReader()
+          reader.onload = function (e) {
+            var productJSON = csvToJSON(e.target.result)
+            if (productJSON) {
+              lsDB.truncate("products")
+              productJSON.forEach(function (value) {
+                lsDB.insert("products", value)
+              })
+              lsDB.commit()
+              allProducts()
+            } else {
+              alertE("Duplicate product_code found, please re-validate your file");
+            }
+          }
+          reader.readAsText(productFile.files[0]);
+        } else {
+          alertE("This browser does not support HTML5");
+        }
+      } else {
+        alertE("Please upload a valid CSV file");
+      }
+    }
+
+    function csvToJSON(csv) {
+      var lines = csv.split("\n");
+      var result = [];
+      var headers = lines[0].split(",");
+
+      for (var i = 1; i < lines.length; i++) {
+        var obj = {};
+        var currentline = lines[i].split(",")
+        for (var j = 0; j < headers.length; j++) {
+          obj[headers[j]] = currentline[j]
+        }
+        result.push(obj)
+      }
+
+      const unique = new Set()
+      const anyDuplicateProductCode = result.some(element => unique.size === unique.add(element.product_code).size)
+      if (anyDuplicateProductCode) {
+        return false
+      }
+
+      return result
+    }
+
+  </script>
+
+</body>
+
+</html>

@@ -33,6 +33,9 @@
           <li class="nav-item">
             <a class="nav-link" href="./product.html">Product</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./config.html">Config</a>
+          </li>
         </ul>
       </div>
 
@@ -49,10 +52,7 @@
       <div class="col-lg-8 mb-3">
         <div class="card" id="table_sales_card">
           <div class="card-body p-3">
-            <div id="pos_logo" style="display: none;">
-              <center><img src="https://cdn0.iconfinder.com/data/icons/kameleon-free-pack-rounded/110/Shop-96.png"></center>
-            </div>
-            <div id="pos_header"></div>
+            <div id="receipt_ref" style="display:none"></div>
             <div class="table-responsive">
               <table class="table table-sm table-striped mb-0" id="tableSalesData">
                 <thead>
@@ -68,47 +68,63 @@
                 <tfoot class="bg-info" id="totalPrice"></tfoot>
               </table>
             </div>
-            <div id="pos_footer"></div>
           </div>
         </div>
         <div class="card mt-3 mb-3">
           <div class="card-body p-3">
-            <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top"
-              title="Add product from list" onclick="onSearchClicked()">
-              <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-            <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Clear"
-              onclick="clearSalesTable()">
-              <i class="fas fa-redo"></i>
-            </button>
-            <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="top"
-              title="Print struct" onclick="printTableSales()">
-              <i class="fa fa-print"></i>
-            </button>
-            <form class="form-inline mt-2" id="seach_product_form" style="display: none;">
-              <div class="form-group mb-2">
-                <label for=""></label>
-                <input type="text" placeholder="Product Code" class="form-control" name="product_code_search" id="product_code_search"
-                  onkeypress="handleEnterKeyPressOnSearchProductCode(event)" />
-              </div>
-              <button type="button" class="btn btn-info ml-2" onclick="onSearchProduct()">
+            <div>
+              <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top"
+                title="Search product from list" onclick="onSearchClicked()">
                 <i class="fa-solid fa-magnifying-glass"></i>
               </button>
-              <div class="table-responsive">
-                <table id="datatable" class="table table-sm table-striped mb-0">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Code</th>
-                      <th>Product</th>
-                      <th style="text-align:end">Price</th>
-                      <th style="text-align:center">Add</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tableProduct"></tbody>
-                </table>
+              <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Clear"
+                onclick="clearSalesTable()">
+                <i class="fas fa-redo"></i>
+              </button>
+              <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Save transaction"
+                onclick="saveSalesTransaction()">
+              <i class="fas fa-save"></i>
+              </button>
+              <button type="button" class="btn btn-warning" data-toggle="tooltip" data-placement="top"
+                title="Print receipt" onclick="printTableSales()">
+                <i class="fa fa-print"></i>
+              </button>
+            </div>
+
+            <div>
+              <div class="mt-2" id="seach_product_form" style="display: none;">
+                <div>
+                  <form class="form-inline mb-2">
+                    <div class="form-group">
+                      <label for=""></label>
+                      <input type="text" placeholder="Product Code" class="form-control" name="product_code_search" id="product_code_search"
+                        onkeypress="handleEnterKeyPressOnSearchProductCode(event)" />
+                    </div>
+                    <div class="form-group ml-1" style="align-self: end;">
+                      <button type="button" class="btn btn-info" onclick="onSearchProduct()">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                <div class="table-responsive">
+                  <table id="datatable" class="table table-sm table-striped mb-0">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Code</th>
+                        <th>Product</th>
+                        <th style="text-align:end">Price</th>
+                        <th style="text-align:center">Add</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableProduct"></tbody>
+                  </table>
+                </div>
+  
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
@@ -149,7 +165,7 @@
         return
       }
 
-      onAddToCart(products[0].ID, products[0].product_name, products[0].product_price, 1)
+      onAddToCart(products[0].ID, products[0].product_code, products[0].product_name, products[0].product_price, 1)
     }
 
     function onNextScan() {
@@ -183,7 +199,7 @@
     function onSearchClicked() {
       var formSearchProduct = document.getElementById("seach_product_form")
       if (formSearchProduct.style.display === "none") {
-        formSearchProduct.style.display = "flex"
+        formSearchProduct.style.display = "block"
       } else {
         formSearchProduct.style.display = "none"
       }
@@ -221,7 +237,7 @@
               singleDataRow += `<td>${va}</td>`
             }
           })
-          tableProduct += "<tr>" + singleDataRow + `<td style="text-align:center"><button type="button" class="btn btn-sm btn-success" onclick="onAddToCart(${singleData[0]}, '${singleData[2]}', '${singleData[3]}', 1)">
+          tableProduct += "<tr>" + singleDataRow + `<td style="text-align:center"><button type="button" class="btn btn-sm btn-success" onclick="onAddToCart(${singleData[0]}, '${singleData[1]}', '${singleData[2]}', '${singleData[3]}', 1)">
 							<i class="fa fa-plus"></i>
 						</button></td></tr>`
         })
@@ -241,18 +257,20 @@
       }
     }
 
-    function onAddToCart(id, productName, productPrice, qtyValue) {
+    function onAddToCart(id, productCode, productName, productPrice, qtyValue) {
       var pid = "pid_" + id
+      var pidName = "pid_name_" + productCode
+      var pidPrice = "pid_price_" + productCode
       var pidQty = "pid_qty_" + id
       var pidSubtotalPrice = "pid_subtotal_" + id
       var tr = "<tr id=" + pid + ">"
-      var tdProductName = "<td>" + productName + "</td>"
-      var tdProductPrice = "<td style='text-align:end'>" + productPrice + "</td>"
+      var tdProductName = `<td id="${pidName}">${productName}</td>`
+      var tdProductPrice = `<td id="${pidPrice}" style='text-align:end'>${productPrice}</td>`
       var tdOP = `<td id="table_sales_operation_button_${id}" style="text-align:center">
-							<button type="button" class="btn btn-sm btn-success" onclick="onAddToCart(${id}, '${productName}', '${productPrice}', 1)">
+							<button type="button" class="btn btn-sm btn-success" onclick="onAddToCart(${id}, '${productCode}', '${productName}', '${productPrice}', 1)">
 								<i class="fa fa-plus"></i>
 							</button>
-							<button type="button" class="btn btn-sm btn-danger" onclick="onAddToCart(${id}, '${productName}', '${productPrice}', -1)">
+							<button type="button" class="btn btn-sm btn-danger" onclick="onAddToCart(${id}, '${productCode}', '${productName}', '${productPrice}', -1)">
 								<i class="fa fa-minus"></i>
 						</button>
 						</td>`
@@ -340,8 +358,72 @@
     }
 
     function clearSalesTable() {
+      document.getElementById("receipt_ref").innerHTML = ""
       document.getElementById("tableSales").innerHTML = ""
       document.getElementById("totalPrice").innerHTML = ""
+    }
+
+    function saveSalesTransaction() {
+      var tableCard = document.getElementById("table_sales_card").innerHTML
+      var tableSales = document.getElementById("tableSales").innerHTML
+      if (tableSales == "") {
+        alertE("Please add atleast 1 product to save this sales transaction")
+        return
+      }
+
+      var pBuyQty = Array.from(document.querySelectorAll("[id^='pid_qty_']"))
+      var pBuyPrice = Array.from(document.querySelectorAll("[id^='pid_price_']"))
+      var pBuyPriceTotal = Array.from(document.querySelectorAll("[id^='pid_subtotal_']"))
+      var pBuyName = Array.from(document.querySelectorAll("[id^='pid_name_']"))
+      var pTotal = document.getElementById("totalPriceTH").innerHTML
+      var pPayment = document.getElementById("totalPayment").innerHTML
+      var pChange = document.getElementById("totalChange").innerHTML
+
+      trxData = []
+      pBuyName.forEach(function (value, i) {
+        let data = { 
+          product_code: value.id.replace("pid_name_", ""),
+          product_name: value.innerHTML,
+          product_price: pBuyPrice[i].innerHTML,
+          product_qty: pBuyQty[i].innerHTML,
+          product_price_total: pBuyPriceTotal[i].innerHTML
+        }
+
+        trxData.push(data)
+      })
+
+      var newDate = new Date();
+      var dateTime = newDate.toLocaleString('sv-SE') // Sweden format seems like common format. i want something like yyyy-mm-dd hh:ii:ss
+      var newQuery = function (row) {
+        if (row['datetime'].match(dateTime.substring(0, 10))) {
+          return true
+        } else {
+          return false
+        }
+      }
+      
+      var trxRef = document.getElementById("receipt_ref").innerHTML
+        if (trxRef == "") {
+          var listSalesTrx = lsDB.queryAll("sales", {
+          query: newQuery
+        })
+        trxRef = `ST/${queryConfig("merchant_code")}/${queryConfig("pic_code")}/${String(listSalesTrx.length + 1).padStart(4, "0")}`
+      }
+
+      var trx = {
+        reference: trxRef,
+        timestamp: newDate / 1000 | 0, // only for backup, when someone want to convert to other format
+        datetime: dateTime,
+        data: trxData,
+        total: pTotal,
+        payment: pPayment,
+        change: pChange
+      }
+
+      document.getElementById("receipt_ref").innerHTML = trxRef
+
+      lsDB.insertOrUpdate("sales", {reference: trxRef}, trx)
+      lsDB.commit()
     }
 
   </script>
@@ -349,47 +431,21 @@
   <!-- Table Printer -->
   <script type="text/javascript">
     function printTableSales() {
-      var tableCard = document.getElementById("table_sales_card").innerHTML;
-      var data = document.getElementById("tableSales").innerHTML;
-      if (data == "") {
-        alertE("Please add atleast 1 product to print")
-        return
+      saveSalesTransaction() // save trx 1st then print it
+      
+      var uri = window.location.pathname.replace("index.html", "receipt.html")
+      if (!(uri.includes("receipt.html"))) {
+        uri += "receipt.html"
       }
 
-      //Get the HTML of whole page
-      var oldPage = document.body.innerHTML;
-      //Reset the page's HTML with div's HTML only
-      document.body.innerHTML =
-        `<html>
-          <head>
-            <title>POS Lite</title>
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-				  </head>
-        <body>` + tableCard + `</body>`;
-
-      var removeItem = Array.from(document.querySelectorAll("[id^='table_sales_operation_']"))
-      removeItem.forEach(function (value) {
-        value.remove()
-      })
-
-      document.getElementById("pos_logo").style.display = "block"
-      document.getElementById("pos_header").innerHTML = `
-        <br />
-        <p>
-          Printed By : Pos Lite<br />
-          Order ID : PL/PL/000001<br />
-          Date : 2022-08-01 22:22:22
-        </p>`
-      document.getElementById("pos_footer").innerHTML = `
-        <br />
-        <p style="text-align:center">Thank You</p>`
-
-      //Print Page
-      window.print();
-
-      //Restore orignal HTML
-      document.body.innerHTML = oldPage;
+      var trxRef = document.getElementById("receipt_ref").innerHTML
+      var printWindow = window.open(uri + '?ref=' + trxRef, 'Print', 'left=200, top=200, width=950, height=500, toolbar=0, resizable=0');
+      printWindow.addEventListener('load', function(){
+          printWindow.print();
+          setTimeout(function(){
+                printWindow.close();
+            }, 500);
+      }, true);
       html5QrcodeScanner.render(onScanSuccess)
     }
 

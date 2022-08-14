@@ -142,6 +142,39 @@
         </div>
       </div>
 
+      <div class="col-lg-12">
+        <div class="card mt-3 mb-3">
+          <div class="card-body p-3">
+            <div>
+              <button type="button" class="btn btn-info" data-toggle="modal"
+              data-target="#resetModal">
+                Factory Reset
+              </button>
+              <div class="modal fade" id="resetModal" tabindex="-1" role="dialog"
+              aria-labelledby="resetModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="resetModalLabel">Warning</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      This action will delete all your data, make sure it's already backup
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" data-dismiss="modal"
+                        onclick="onFactoryResetClicked()">Save changes</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Custom Alert -->
@@ -444,6 +477,11 @@
       }
 
       return result
+    }
+
+    function onFactoryResetClicked() {
+      lsDB.drop("poslite")      
+      location.reload()
     }
 
   </script>

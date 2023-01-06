@@ -337,13 +337,13 @@
       var filterValue = document.getElementById("filter_value").value
 
       var newQuery = {}
-      if (filterType == "default") {
+      if (filterType == "default" || filterValue == "") {
         document.getElementById("filter_value").value = ""
         allProducts()
         return
       } else {
         newQuery = function (row) {
-          if (row[filterType].match(filterValue)) {
+          if (row[filterType].toLowerCase().match(filterValue.toLowerCase())) {
             return true
           } else {
             return false
@@ -361,24 +361,27 @@
 
       productList = ``
       listProduct.forEach(function (value) {
-
         var singleDataValues = Object.values(value)
         var singleDataKeys = Object.keys(value)
         var singleDataRow = ``
         singleDataValues.forEach(function (va, i) {
-          singleDataRow += `<td id="${singleDataKeys[i]}_${singleDataValues[0]}">${va}</td>`
+          if (i + 1 == singleDataValues.length) { // indicating last row that i need to move text to right side
+            singleDataRow += `<td style="text-align:end" id="${singleDataKeys[i]}_${singleDataValues[0]}">${va}</td>`
+          } else {
+            singleDataRow += `<td id="${singleDataKeys[i]}_${singleDataValues[0]}">${va}</td>`
+          }
         })
 
         productList += `
         <tr id="product_data_${singleDataValues[0]}">
           ${singleDataRow}
           <td style="text-align:center">
+            <button class="btn btn-sm btn-secondary" onclick="onEditProduct(${singleDataValues[0]})">
+              <i class="fa fa-edit"></i>
+            </button>
             <button class="btn btn-sm btn-danger" onclick="onDeleteProduct(${singleDataValues[0]})">
               <i class="fas fa-trash"></i>
             </button>
-            <button class="btn btn-sm btn-success" onclick="onEditProduct(${singleDataValues[0]})">
-              <i class="fa fa-edit"></i>
-          </button>
           </td>
         </tr>`
       })

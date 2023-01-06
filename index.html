@@ -215,7 +215,7 @@
 
       lsDB = newSesionDB()
       var searchQuery = function (row) {
-        if (row.product_code.match(input)) {
+        if (row.product_code.toLowerCase().match(input.toLowerCase())) {
           return true
         } else {
           return false

@@ -340,7 +340,7 @@
         return
       } else {
         newQuery = function (row) {
-          if (row[filterType].match(filterValue)) {
+          if (row[filterType].toLowerCase().match(filterValue.toLowerCase())) {
             return true
           } else {
             return false
